@@ -1,0 +1,37 @@
+# install the package required for quality control
+install.packages('qcc')
+# load the library
+library(qcc)
+# the data to be used
+data(pistonrings)
+head(pistonrings)# to view the first six rows of the data
+diameter = with(pistonrings, qcc.groups(diameter, sample))
+view(diameter)
+
+#------ x bar chart----------------
+q1 = qcc(diameter,
+         type="xbar") # xbar chart
+plot(q1, chart.all=FALSE) # to remove the other data
+plot(q1, add.stats=FALSE) # to remove the statistic
+q1 = qcc(diameter, type="xbar", 
+         confidence.level=0.99) # to add confidence
+q1 = qcc(diameter,
+         type="xbar",
+         plot=FALSE) # to extract the warning limit 
+(warn.limits = limits.xbar(q1$center, q1$std.dev, q1$sizes, 2))
+
+plot(q1, restore.par = FALSE)
+abline(h = warn.limits, lty = 3, col = "chocolate") # to add  warning limit
+
+#------ R chart----------------
+q2 = qcc(diameter, type="R") # r chart
+summary(q2) # to show the description 
+
+#------ s chart----------------
+q4 = qcc(diameter, type="S") # s chart
+summary(q4)  # to show the description 
+
+#------ cusum chart ----------------
+q1 = cusum(diameter, decision.interval = 10, 
+           se.shift = 1) # cusum chart
+summary(q1) # to show the description 
